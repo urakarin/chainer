@@ -1,17 +1,16 @@
 import copy
 import inspect
+import re
 import unittest
 
 import numpy as np
+import six
 
 import chainer
 from chainer import cuda
 from chainer import initializers
 from chainer import testing
 from chainer.testing import attr
-
-import re
-import six
 
 
 class Constant(chainer.Function):
