@@ -570,7 +570,6 @@ class TestVariable(unittest.TestCase):
         cp.testing.assert_array_equal(x.data, d.data)
         cp.testing.assert_array_equal(x.grad, d.grad)
 
-<<<<<<< HEAD
     def test_initializer(self):
         x = chainer.Variable(self.x)
         self.assertIsNone(x.initializer)
