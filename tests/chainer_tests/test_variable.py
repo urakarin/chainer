@@ -777,18 +777,17 @@ class TestUninitializedVariable(unittest.TestCase):
 
     def test_update_rule(self):
         update_rule = mock.MagicMock()
-        g = self.x.copy()
-        x = chainer.Variable(self.x, grad=g)
+        g = self.a.copy()
+        x = chainer.Variable(self.a, grad=g)
         x.update_rule = update_rule
         x.update()
         self.assertEqual(update_rule.update.call_count, 1)
         args = update_rule.update.call_args_list[0][0]
-        self.assertIs(args[0], self.x)
-        self.assertIs(args[1], g)
+        self.assertIs(args[0], x)
 
     def test_update_rule_without_grad(self):
         update_rule = mock.MagicMock()
-        x = chainer.Variable(self.x)
+        x = chainer.Variable(self.a)
         x.update_rule = update_rule
         x.update()
         self.assertEqual(update_rule.update.call_count, 0)
