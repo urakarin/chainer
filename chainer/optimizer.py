@@ -100,7 +100,7 @@ class UpdateRule(object):
     of each parameter defines how to update it.
 
     Hook functions can be set to any update rule instance. The hook function is
-    called just before any updates.
+    called just before any updates in the order of registrations.
 
     An implementation of update rule should override :meth:`update_core` or
     its device-dependent variants (i.e., :meth:`update_core_cpu` and

@@ -96,8 +96,6 @@ class Variable(object):
             :class:`~chainer.Flag` for the detail of ternary flags.
         initializer: Initializer of the data array. It is used for initializing
             the data array of an uninitialized variable.
-        update_rule (~chainer.optimizer.UpdateRule): Update rule attached to
-            this variable.
 
     """
 
