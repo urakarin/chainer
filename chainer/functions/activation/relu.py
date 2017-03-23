@@ -34,9 +34,11 @@ class ReLU(function.Function):
         if (chainer.should_use_cudnn('==always') and
                 x[0].flags.c_contiguous and
                 (_cudnn_version >= 3000 or x[0].dtype != numpy.float16)):
+            self._use_cudnn = True
             y = cudnn.activation_forward(x[0], _mode)
         else:
             self.retain_inputs(())
+            self._use_cudnn = False
             y = cuda.cupy.maximum(x[0], 0)
         self.retain_outputs((0,))
         return y,
@@ -47,9 +49,7 @@ class ReLU(function.Function):
 
     def backward_gpu(self, x, gy):
         y = self.output_data[0]
-        if (chainer.should_use_cudnn('==always') and
-                x[0].flags.c_contiguous and gy[0].flags.c_contiguous and
-                (_cudnn_version >= 3000 or x[0].dtype != numpy.float16)):
+        if chainer.should_use_cudnn('==always') and self._use_cudnn:
             gx = cudnn.activation_backward(x[0], y, gy[0], _mode)
         else:
             gx = cuda.elementwise(
