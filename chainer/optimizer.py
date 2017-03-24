@@ -117,6 +117,7 @@ class UpdateRule(object):
         enabled (bool): Flag to configure if this update rule is active. If the
             update rule is not active (i.e., ``enabled = False``), the
             :meth:`update` method does not update the parameter.
+        hyperparam (Hyperparameter): Hyperparameter of the update rule.
         t (int): Number of updates made by this update rule.
 
     """
@@ -124,6 +125,7 @@ class UpdateRule(object):
         self._hooks = collections.OrderedDict()
         self._state = None
         self.enabled = True
+        self.hyperparam = Hyperparameter()
         self.t = 0
 
     @property
@@ -541,10 +543,16 @@ class GradientMethod(Optimizer):
        :class:`GradientMethod` object for efficiency.
 
     """
+    def __init__(self):
+        super(GradientMethod, self).__init__()
+        self.hyperparam = Hyperparameter()
+
     def setup(self, link):
         super(GradientMethod, self).setup(link)
         for param in link.params():
-            self.setup_update_rule(param)
+            rule = self.create_update_rule()
+            rule.hyperparam.set_parent(self.hyperparam)
+            param.update_rule = rule
 
     def update(self, lossfun=None, *args, **kwds):
         """Updates parameters based on a loss function or computed gradients.
@@ -602,15 +610,16 @@ class GradientMethod(Optimizer):
         """
         self._use_cleargrads = use
 
-    def setup_update_rule(self, param):
-        """Sets up an update rule object to a given parameter.
+    def create_update_rule(self):
+        """Creates a new update rule object.
 
-        This method creates an update rule object and sets it to the parameter.
-        Each implementation of the gradient method should override this to
-        provide the default update rule implementation.
+        This method creates an update rule object. It is called by
+        :meth:`setup` to set up an update rule of each parameter.
+        Each implementation of the gradient method should override this method
+        to provide the default update rule implementation.
 
-        Args:
-            param (~chainer.Variable): Parameter variable object.
+        Return:
+            UpdateRule: Update rule object.
 
         """
         raise NotImplementedError

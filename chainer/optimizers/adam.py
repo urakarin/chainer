@@ -29,7 +29,7 @@ class AdamRule(optimizer.UpdateRule):
     """
     def __init__(self, alpha=None, beta1=None, beta2=None, eps=None):
         super(AdamRule, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter(_default_hyperparam)
+        self.hyperparam.set_parent(_default_hyperparam)
         if alpha is not None:
             self.hyperparam.alpha = alpha
         if beta1 is not None:
@@ -91,12 +91,10 @@ class Adam(optimizer.GradientMethod):
                  beta2=_default_hyperparam.beta2,
                  eps=_default_hyperparam.eps):
         super(Adam, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter()
         self.hyperparam.alpha = alpha
         self.hyperparam.beta1 = beta1
         self.hyperparam.beta2 = beta2
         self.hyperparam.eps = eps
 
-    def setup_update_rule(self, param):
-        param.update_rule = AdamRule()
-        param.update_rule.hyperparam.set_parent(self.hyperparam)
+    def create_update_rule(self):
+        return AdamRule()

@@ -23,7 +23,7 @@ class SMORMS3Rule(optimizer.UpdateRule):
     """
     def __init__(self, lr=None, eps=None):
         super(SMORMS3Rule, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter(_default_hyperparam)
+        self.hyperparam.set_parent(_default_hyperparam)
         if lr is not None:
             self.hyperparam.lr = lr
         if eps is not None:
@@ -80,10 +80,8 @@ class SMORMS3(optimizer.GradientMethod):
     """
     def __init__(self, lr=_default_hyperparam.lr, eps=_default_hyperparam.eps):
         super(SMORMS3, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter()
         self.hyperparam.lr = lr
         self.hyperparam.eps = eps
 
-    def setup_update_rule(self, param):
-        param.update_rule = SMORMS3Rule()
-        param.update_rule.hyperparam.set_parent(self.hyperparam)
+    def create_update_rule(self):
+        return SMORMS3Rule()

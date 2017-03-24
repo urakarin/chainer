@@ -408,11 +408,7 @@ class TestGradientMethod(unittest.TestCase):
                        np.arange(3).astype(np.float32)),
             SimpleLink(np.arange(3).astype(np.float32),
                        np.arange(3).astype(np.float32)))
-
-        def setup_update_rule(param):
-            param.update_rule = mock.MagicMock()
-
-        self.optimizer.setup_update_rule = setup_update_rule
+        self.optimizer.create_update_rule = mock.MagicMock
 
     def setup_cpu(self):
         self.optimizer.setup(self.target)
@@ -422,17 +418,15 @@ class TestGradientMethod(unittest.TestCase):
         self.optimizer.setup(self.target)
 
     def test_setup(self):
-        setup_update_rule = mock.MagicMock()
-        self.optimizer.setup_update_rule = setup_update_rule
+        create_update_rule = mock.MagicMock()
+        self.optimizer.create_update_rule = create_update_rule
         self.optimizer.setup(self.target)
 
-        self.assertEqual(setup_update_rule.call_count, 2)
-        self.assertEqual(setup_update_rule.call_args_list[0][0],
-                         (self.target[0].param,))
-        self.assertEqual(setup_update_rule.call_args_list[0][1], {})
-        self.assertEqual(setup_update_rule.call_args_list[1][0],
-                         (self.target[1].param,))
-        self.assertEqual(setup_update_rule.call_args_list[1][1], {})
+        self.assertEqual(create_update_rule.call_count, 2)
+        self.assertEqual(create_update_rule.call_args_list[0][0], ())
+        self.assertEqual(create_update_rule.call_args_list[0][1], {})
+        self.assertEqual(create_update_rule.call_args_list[1][0], ())
+        self.assertEqual(create_update_rule.call_args_list[1][1], {})
 
     def check_update(self):
         self.assertEqual(self.optimizer.t, 0)
@@ -543,10 +537,11 @@ class TestGradientMethod(unittest.TestCase):
 class DummyOptimizer(chainer.GradientMethod):
 
     def __init__(self, test):
+        super(DummyOptimizer, self).__init__()
         self.test = test
 
-    def setup_update_rule(self, param):
-        param.update_rule = mock.MagicMock()
+    def create_update_rule(self):
+        return mock.MagicMock()
 
 
 class DummyHook(object):

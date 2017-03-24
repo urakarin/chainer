@@ -29,7 +29,7 @@ class RMSpropGravesRule(optimizer.UpdateRule):
     """
     def __init__(self, lr=None, alpha=None, momentum=None, eps=None):
         super(RMSpropGravesRule, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter(_default_hyperparam)
+        self.hyperparam.set_parent(_default_hyperparam)
         if lr is not None:
             self.hyperparam.lr = lr
         if alpha is not None:
@@ -94,12 +94,10 @@ class RMSpropGraves(optimizer.GradientMethod):
                  momentum=_default_hyperparam.momentum,
                  eps=_default_hyperparam.eps):
         super(RMSpropGraves, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter()
         self.hyperparam.lr = lr
         self.hyperparam.alpha = alpha
         self.hyperparam.momentum = momentum
         self.hyperparam.eps = eps
 
-    def setup_update_rule(self, param):
-        param.update_rule = RMSpropGravesRule()
-        param.update_rule.hyperparam.set_parent(self.hyperparam)
+    def create_update_rule(self):
+        return RMSpropGravesRule()

@@ -25,7 +25,7 @@ class RMSpropRule(optimizer.UpdateRule):
     """
     def __init__(self, lr=None, alpha=None, eps=None):
         super(RMSpropRule, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter(_default_hyperparam)
+        self.hyperparam.set_parent(_default_hyperparam)
         if lr is not None:
             self.hyperparam.lr = lr
         if alpha is not None:
@@ -73,11 +73,9 @@ class RMSprop(optimizer.GradientMethod):
     def __init__(self, lr=_default_hyperparam.lr,
                  alpha=_default_hyperparam.alpha, eps=_default_hyperparam.eps):
         super(RMSprop, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter()
         self.hyperparam.lr = lr
         self.hyperparam.alpha = alpha
         self.hyperparam.eps = eps
 
-    def setup_update_rule(self, param):
-        param.update_rule = RMSpropRule()
-        param.update_rule.hyperparam.set_parent(self.hyperparam)
+    def create_update_rule(self):
+        return RMSpropRule()

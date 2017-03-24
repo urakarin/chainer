@@ -24,7 +24,7 @@ class AdaDeltaRule(optimizer.UpdateRule):
     """
     def __init__(self, rho=None, eps=None):
         super(AdaDeltaRule, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter(_default_hyperparam)
+        self.hyperparam.set_parent(_default_hyperparam)
         if rho is not None:
             self.hyperparam.rho = rho
         if eps is not None:
@@ -77,10 +77,8 @@ class AdaDelta(optimizer.GradientMethod):
     def __init__(self, rho=_default_hyperparam.rho,
                  eps=_default_hyperparam.eps):
         super(AdaDelta, self).__init__()
-        self.hyperparam = optimizer.Hyperparameter()
         self.hyperparam.rho = rho
         self.hyperparam.eps = eps
 
-    def setup_update_rule(self, param):
-        param.update_rule = AdaDeltaRule()
-        param.update_rule.hyperparam.set_parent(self.hyperparam)
+    def create_update_rule(self):
+        return AdaDeltaRule()
